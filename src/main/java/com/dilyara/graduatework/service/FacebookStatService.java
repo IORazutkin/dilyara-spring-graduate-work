@@ -22,6 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FacebookStatService {
   public List<TargetDto> getWeeklyTarget (User user, String index) {
+    if (!user.checkUserValid()) {
+      return null;
+    }
+
     LocalDate current = LocalDate.now().plusWeeks(Integer.parseInt(index));
     LocalDate next = LocalDate.now().plusWeeks(Integer.parseInt(index) + 1);
     TemporalField fieldRu = WeekFields.ISO.dayOfWeek();
@@ -51,6 +55,10 @@ public class FacebookStatService {
   }
 
   public StatDto getStat (User user) {
+    if (!user.checkUserValid()) {
+      return null;
+    }
+
     StatDto statDto = new StatDto();
     statDto.setAudience(getAudienceDto(user));
     statDto.setPage(getPageDto(user));
@@ -114,6 +122,10 @@ public class FacebookStatService {
   }
 
   public InstagramPostListDto getPosts (User user, String limit, String after) {
+    if (!user.checkUserValid()) {
+      return null;
+    }
+
     RestTemplate restTemplate = new RestTemplate();
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
       FacebookService.API_GRAPH_ENDPOINT + "/" + user.getInstagramId() + "/media"
@@ -155,6 +167,10 @@ public class FacebookStatService {
   }
 
   public WeeklyStatDto getWeeklyStat (User user) {
+    if (!user.checkUserValid()) {
+      return null;
+    }
+
     LocalDate previous = LocalDate.now().minusWeeks(1);
     LocalDate current = LocalDate.now();
     LocalDate next = LocalDate.now().plusWeeks(1);

@@ -73,4 +73,8 @@ public class User implements UserDetails {
   public boolean isEnabled () {
     return true;
   }
+
+  public Boolean checkUserValid () {
+    return getToken() != null && getInstagramId() != null && !getInstagramId().equals("");
+  }
 }

@@ -48,15 +48,13 @@ public class FacebookService {
       FacebookToken oldToken = user.getToken();
       user.setToken(accessTokenDto.toFacebookToken());
 
-      user = userRepo.save(user);
-
-      if (oldToken != null) {
-        facebookTokenRepo.delete(oldToken);
-      }
-
       String accountId = getFirstAccountId(user);
       user = saveInstagramId(user, accountId);
       user = saveInstagramUsername(user);
+      user = userRepo.save(user);
+      if (oldToken != null) {
+        facebookTokenRepo.delete(oldToken);
+      }
       return user;
     }
 
@@ -73,13 +71,17 @@ public class FacebookService {
     );
 
     if (accountsDto != null) {
-      return accountsDto.getData().get(0).getId();
+      return accountsDto.getData().size() > 0 ? accountsDto.getData().get(0).getId() : null;
     }
 
     return null;
   }
 
   public User saveInstagramId (User user, String accountId) {
+    if (accountId == null) {
+      return user;
+    }
+
     RestTemplate restTemplate = new RestTemplate();
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(API_GRAPH_ENDPOINT + "/" + accountId)
       .queryParam("fields", "instagram_business_account")
@@ -90,14 +92,20 @@ public class FacebookService {
     );
 
     if (instagramAccountDto != null) {
-      user.setInstagramId(instagramAccountDto.getInstagramBusinessAccount().getId());
-      return userRepo.save(user);
+      if (instagramAccountDto.getInstagramBusinessAccount() != null) {
+        user.setInstagramId(instagramAccountDto.getInstagramBusinessAccount().getId());
+      }
+      return user;
     }
 
     return null;
   }
 
   public User saveInstagramUsername (User user) {
+    if (user.getInstagramId() == null) {
+      return user;
+    }
+
     RestTemplate restTemplate = new RestTemplate();
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
       API_GRAPH_ENDPOINT + "/" + user.getInstagramId()
@@ -111,7 +119,7 @@ public class FacebookService {
 
     if (instagramInfoDto != null) {
       user.setInstagramUsername(instagramInfoDto.getUsername());
-      return userRepo.save(user);
+      return user;
     }
 
     return null;

@@ -17,10 +17,10 @@ public class WeeklyStatDto {
     Integer followerCount;
 
     public Stat (List<Integer> params) {
-      this.impressions = params.get(0);
-      this.reach = params.get(1);
-      this.profileViews = params.get(2);
-      this.followerCount = params.get(3);
+      this.impressions = params.size() >= 1 ? params.get(0) : 0;
+      this.reach = params.size() >= 2 ? params.get(1) : 0;
+      this.profileViews = params.size() >= 3 ? params.get(2) : 0;
+      this.followerCount = params.size() >= 4 ? params.get(3) : 0;
     }
   }
 }
