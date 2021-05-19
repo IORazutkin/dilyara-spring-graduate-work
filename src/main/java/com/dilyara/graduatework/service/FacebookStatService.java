@@ -94,11 +94,16 @@ public class FacebookStatService {
     );
 
     if (insightDto != null) {
-      Map<String, Integer> audienceCity = (Map<String, Integer>) insightDto.getData().get(0).getValues().get(0).getValue();
-      Map<String, Integer> audienceGenderAge = (Map<String, Integer>) insightDto.getData().get(1).getValues().get(0).getValue();
+      Map<String, Integer> audienceCity = insightDto.getData().size() > 0 ? (Map<String, Integer>) insightDto.getData().get(0).getValues().get(0).getValue() : null;
+      Map<String, Integer> audienceGenderAge = insightDto.getData().size() > 1 ? (Map<String, Integer>) insightDto.getData().get(1).getValues().get(0).getValue() : null;
 
-      audienceCity = getSortEndLimitMap(audienceCity);
-      audienceGenderAge = getSortEndLimitMap(audienceGenderAge);
+      if (audienceCity != null) {
+        audienceCity = getSortEndLimitMap(audienceCity);
+      }
+
+      if (audienceGenderAge != null) {
+        audienceGenderAge = getSortEndLimitMap(audienceGenderAge);
+      }
 
       AudienceDto audienceDto = new AudienceDto();
       audienceDto.setAudienceCity(audienceCity);
